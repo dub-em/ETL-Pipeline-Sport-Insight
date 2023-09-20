@@ -19,10 +19,12 @@ def matches_scores(url):
     options = Options()
     
     #Sets up a fake browser
-    services = Service(executable_path=exe_path)
+    #services = Service(executable_path=exe_path)
+    services = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     ua = UserAgent()
     userAgent = ua.random
     options.add_argument(f'user-agent={userAgent}')
+    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -165,11 +167,13 @@ def matches_details(team, url):
     url = url
     
     #Sets up a fake browser
-    services = Service(executable_path=exe_path)
+    #services = Service(executable_path=exe_path)
+    services = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     options = Options()
     ua = UserAgent()
     userAgent = ua.random
     options.add_argument(f'user-agent={userAgent}')
+    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -196,6 +200,7 @@ def matches_details(team, url):
             ua = UserAgent()
             userAgent = ua.random
             options.add_argument(f'user-agent={userAgent}')
+            options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
             options.add_argument('--blink-settings=imagesEnabled=false')
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
@@ -381,11 +386,13 @@ def match_extraction(leagues_list, today_date):
             league_url = leagues_list[key][0]
 
             #Sets up a fake browser
-            services = Service(executable_path=exe_path)
+            #services = Service(executable_path=exe_path)
+            services = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
             options = Options()
             ua = UserAgent()
             userAgent = ua.random
             options.add_argument(f'user-agent={userAgent}')
+            options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
             options.add_argument('--blink-settings=imagesEnabled=false')
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
