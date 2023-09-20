@@ -1,0 +1,10 @@
+selenium
+bs4
+psycopg2
+collection
+pydantic
+pydantic-settings
+fake_useragent
+requests
+pandas
+numpy
