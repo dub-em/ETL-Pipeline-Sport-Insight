@@ -1,11 +1,11 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    host: str
-    port: str
-    database: str
-    user: str
-    password: str
+    database_hostname: str
+    database_port: str
+    database_name: str
+    database_user: str
+    database_password: str
 
 
     class Config:

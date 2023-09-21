@@ -16,11 +16,11 @@ def refdata_loader(dataset):
 
     #PostgreSQL database connection parameters
     connection_params = {
-        "host": settings.host,
-        "port": settings.port,
-        "database": settings.database,
-        "user": settings.user,
-        "password": settings.password
+        "host": settings.database_hostname,
+        "port": settings.database_port,
+        "database": settings.database_name,
+        "user": settings.database_user,
+        "password": settings.database_password
     }
 
     #Connect to PostgreSQL

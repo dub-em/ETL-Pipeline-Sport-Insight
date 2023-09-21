@@ -334,11 +334,11 @@ def data_loader(dataset):
 
     #PostgreSQL database connection parameters
     connection_params = {
-        "host": settings.host,
-        "port": settings.port,
-        "database": settings.database,
-        "user": settings.user,
-        "password": settings.password
+        "host": settings.database_hostname,
+        "port": settings.database_port,
+        "database": settings.database_name,
+        "user": settings.database_user,
+        "password": settings.database_password
     }
 
     #Connect to PostgreSQL
@@ -536,7 +536,7 @@ def match_extraction(leagues_list, today_date):
         #Retries to load all the previous data that couldn't be loaded during extraction into the database
         for i in range(2): #Tries twice to load data in case of any unforeseen connection issue
             try:
-                data_loader(today_df) #If try is successful, breaks the loop
+                data_loader(final_dataset) #If try is successful, breaks the loop
                 break
             except Exception as e:
                 except_messgs[f"(Final Database Loading): {i}"] = f"{type(e).__name__}: {e}" #Catches and Records Error
