@@ -8,8 +8,8 @@ today = date.today()
 tomorrow = date.today() + timedelta(days=1)
 
 def main():
-    match_extraction(testleagues_list, tomorrow)
-    refreehist_extraction(testleagues_list, tomorrow)
+    match_extraction(testleagues_list, today)
+    refreehist_extraction(testleagues_list, today)
     for key in except_messgs.keys():
         print(f"{key}: {except_messgs[key]}")
     for key in refexcept_messgs.keys():
