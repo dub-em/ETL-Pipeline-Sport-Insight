@@ -27,6 +27,7 @@ def matches_scores(url):
     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
@@ -176,6 +177,7 @@ def matches_details(team, url):
     options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
@@ -203,6 +205,7 @@ def matches_details(team, url):
             options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
             options.add_argument('--blink-settings=imagesEnabled=false')
             options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
 
@@ -395,6 +398,7 @@ def match_extraction(leagues_list, today_date):
             options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
             options.add_argument('--blink-settings=imagesEnabled=false')
             options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
 
