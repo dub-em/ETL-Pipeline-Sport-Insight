@@ -5,7 +5,7 @@ from var import testleagues_list
 
 
 today = date.today()
-tomorrow = date.today() + timedelta(days=2)
+tomorrow = date.today() + timedelta(days=1)
 
 def main():
     match_extraction(testleagues_list, tomorrow)
