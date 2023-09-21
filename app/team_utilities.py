@@ -28,7 +28,7 @@ def matches_scores(url):
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-sh-usage")
+    options.add_argument("--disable-dev-shm-usage")
     
     driver = webdriver.Chrome(service=services, options=options)
     
@@ -177,7 +177,7 @@ def matches_details(team, url):
     options.add_argument('--blink-settings=imagesEnabled=false')
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-sh-usage")
+    options.add_argument("--disable-dev-shm-usage")
     
     driver = webdriver.Chrome(service=services, options=options)
 
@@ -204,7 +204,7 @@ def matches_details(team, url):
             options.add_argument('--blink-settings=imagesEnabled=false')
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-sh-usage")
+            options.add_argument("--disable-dev-shm-usage")
 
             driver = webdriver.Chrome(service=services,options=options)
 
@@ -396,7 +396,7 @@ def match_extraction(leagues_list, today_date):
             options.add_argument('--blink-settings=imagesEnabled=false')
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-sh-usage")
+            options.add_argument("--disable-dev-shm-usage")
 
             driver = webdriver.Chrome(service=services, options=options)
 
