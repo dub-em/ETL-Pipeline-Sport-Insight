@@ -4,10 +4,11 @@ from ref_utilities import refreehist_extraction, refexcept_messgs
 from var import testleagues_list
 
 
-today = date.today()
-tomorrow = date.today() + timedelta(days=1)
-
 def main():
+    today = date.today()
+    tomorrow = date.today() + timedelta(days=1)
+    print(today, tomorrow)
+
     match_extraction(testleagues_list, today)
     refreehist_extraction(testleagues_list, today)
     for key in except_messgs.keys():

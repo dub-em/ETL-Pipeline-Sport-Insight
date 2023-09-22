@@ -387,6 +387,7 @@ def match_extraction(leagues_list, today_date):
             keep variable the same to maintain the while loop until data is gotten'''
             
             league_url = leagues_list[key][0]
+            print(league_url)
 
             #Sets up a fake browser
             #services = Service(executable_path=exe_path)
@@ -451,12 +452,14 @@ def match_extraction(leagues_list, today_date):
             #for each match url extract the head2head, home team and away team games score for the last 10 recent games
             for i in range(len(list(today_df['match_urls']))):
                 match_url = list(today_df['match_urls'])[i]
+                print(match_url)
                 setup_1 = f"{list(today_df['HomeTeam'])[i]}:{list(today_df['AwayTeam'])[i]} (Historic Score)"
                 try:
                     home_team_matches, away_team_matches, head2head_matches = matches_scores(match_url)
                     hometeam_form.append(home_team_matches)
                     awayteam_form.append(away_team_matches)
                     head2head.append(head2head_matches)
+                    print('done!')
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} ({setup_1})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
                     league_counter += 1
@@ -464,34 +467,41 @@ def match_extraction(leagues_list, today_date):
                     hometeam_form.append(empty_json)
                     awayteam_form.append(empty_json)
                     head2head.append(empty_json)
+                    print('except!')
             
             #extract the match detail (yellow cars, goals, penalties and times etc) for last 10 games by home team
             for i in range(len(list(today_df['home_urls']))):
                 home_url = list(today_df['home_urls'])[i]
+                print(home_url)
                 home_team = list(today_df['HomeTeam'])[i]
                 setup = f"{list(today_df['HomeTeam'])[i]}:{list(today_df['AwayTeam'])[i]} (Home Inner-Det)"
                 try:
                     home_team_dets = matches_details(home_team, home_url)
                     home_details.append(home_team_dets)
+                    print('done!')
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
                     home_details.append(empty_json)
+                    print('except!')
             
             #extract the match detail (yellow cars, goals, penalties and times etc) for last 10 games by away team
             for i in range(len(list(today_df['away_urls']))):
                 away_url = list(today_df['away_urls'])[i]
+                print(away_url)
                 away_team = list(today_df['AwayTeam'])[i]
                 setup = f"{list(today_df['HomeTeam'])[i]}:{list(today_df['AwayTeam'])[i]} (Away Inner-Det)"
                 try:
                     away_team_dets = matches_details(away_team, away_url)
                     away_detials.append(away_team_dets)
+                    print('done!')
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
-                    away_detials.append(empty_json)   
+                    away_detials.append(empty_json)
+                    print('except!')   
 
             #Add all these extracted data to the dataframe of daily match of the current league being extracted
             today_df['home_team_matches'] = hometeam_form
@@ -505,11 +515,12 @@ def match_extraction(leagues_list, today_date):
             for i in range(2): #Tries twice to load data in case of any unforeseen connection issue
                 try:
                     data_loader(today_df) #If try is successful, breaks the loop
-                    #print("All daily matches of {} have been loaded!".format(key))
+                    print("All daily matches of {} have been loaded!".format(key))
                     break
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} (Database Loading)"] = f"{type(e).__name__}: {e}" #Catches and Records Error
                     league_counter += 1
+                    print("All daily matches of {} couldn't be loaded!".format(key))
                     if i < 1: #If try isn't successful but it's the first time, then it tries again
                         continue
                     else: #If try isn't successful the second time, it adds the dataframe to the dictionary to try later.
@@ -520,10 +531,10 @@ def match_extraction(leagues_list, today_date):
             league_counter += 1
             try:
                 driver.quit()
-                #print("Daily matches of {} couldn't be extracted!".format(key))
+                print("Daily matches of {} couldn't be extracted!".format(key))
                 continue
             except:
-                #print("Daily matches of {} couldn't be extracted!".format(key))
+                print("Daily matches of {} couldn't be extracted!".format(key))
                 continue
      
     #All the dataframe of the daily matches for all the leagues extracted are concatenated vertically
