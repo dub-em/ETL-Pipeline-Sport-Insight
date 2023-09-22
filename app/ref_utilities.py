@@ -106,7 +106,7 @@ def refreehist_extraction(leagues_list, today, tomorrow):
                 df['Date'] = pd.to_datetime(df['Date'],  format='%d/%m/%Y')
 
                 #Filter rows with today's date
-                today_df = df[(df['Date/Time'].dt.date == today) | (df['Date/Time'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
+                today_df = df[(df['Date'].dt.date == today) | (df['Date'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
                 today_df = today_df.copy(deep=True)
                 curr_league = [key for i in range(len(today_df['Links']))]
                 today_df['League'] = curr_league
