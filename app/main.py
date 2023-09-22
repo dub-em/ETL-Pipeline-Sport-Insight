@@ -16,8 +16,6 @@ def main():
             print(f"{key}: {except_messgs[key]}")
         for key in refexcept_messgs.keys():
             print(f"{key}: {refexcept_messgs[key]}")
-    else:
-        print('Today is an odd day, so no extraction!')
 
 
 if __name__ == '__main__':
