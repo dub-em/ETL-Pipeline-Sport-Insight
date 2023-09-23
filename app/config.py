@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     database_name: str
     database_user: str
     database_password: str
+    email_address: str
+    email_password: str
 
 
     class Config:
