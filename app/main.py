@@ -15,6 +15,7 @@ def main():
     It also records the error log and sends it to the dev's/client's email'''
 
     run_mode = os.environ.get('RUN_MODE')
+    print(run_mode)
     
 
     if run_mode == 'api':
