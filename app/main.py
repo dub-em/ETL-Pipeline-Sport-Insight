@@ -19,10 +19,6 @@ def main():
     if (today.day % 2) == 1:
         match_extraction(testleagues_list, today, tomorrow)
         refreehist_extraction(testleagues_list, today, tomorrow)
-        #for key in except_messgs.keys():
-            #print(f"{key}: {except_messgs[key]}")
-        #for key in refexcept_messgs.keys():
-            #print(f"{key}: {refexcept_messgs[key]}")
 
         #Concatenating error logs to send to email.
         email = f"Error Logs for {today} and {tomorrow} Extraction.\n\n"
