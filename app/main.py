@@ -14,12 +14,10 @@ def main():
     
     It also records the error log and sends it to the dev's/client's email'''
 
-    run_mode = os.environ.get('RUN_MODE')
-    print(run_mode)
     dyno_type = os.environ.get("DYNO")
     print(dyno_type)
 
-    if run_mode == 'api':
+    if 'run' in dyno_type:
         today = date.today()
         tomorrow = date.today() + timedelta(days=1)
         print(today, tomorrow)
@@ -52,7 +50,7 @@ def main():
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                 smtp.login(settings.email_address, settings.email_password)
                 smtp.send_message(msg)
-    elif run_mode == 'scheduler':
+    elif 'scheduler' in dyno_type:
         today = date.today()
         tomorrow = date.today() + timedelta(days=1)
         print(today, tomorrow)
