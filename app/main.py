@@ -16,7 +16,8 @@ def main():
 
     run_mode = os.environ.get('RUN_MODE')
     print(run_mode)
-    
+    dyno_type = os.environ.get("DYNO")
+    print(dyno_type)
 
     if run_mode == 'api':
         today = date.today()
