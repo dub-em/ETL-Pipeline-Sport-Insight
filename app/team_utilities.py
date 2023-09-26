@@ -190,7 +190,6 @@ def matches_details(team, url):
     
     #Extracts the data in the table rows (containing links to previous match)
     elements = driver.find_elements(By.CLASS_NAME, "h2h__row")#'Klik voor wedstrijddetails!'
-    elem_links = []
           
     list_of_details = {}
     
@@ -215,16 +214,13 @@ def matches_details(team, url):
             #Loads up the url using the chromedriver and clicks the cookie prompt
             driver.get(url)
             WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="onetrust-accept-btn-handler"]'))).click()
-            time.sleep(3)
+            time.sleep(1.5)
 
             #Extracts the data in the table rows (containing links to previous match)
             element = driver.find_elements(By.CLASS_NAME, "h2h__row")
             elem = element[count]
             elem.click()
             driver.switch_to.window(driver.window_handles[-1]) #Switches the driver to the new opened page
-            #current_url = driver.current_url
-            #print(current_url)
-            #elem_links.append(current_url)
             
             #checks which role the team under consideration played as (home or away) in the match being checked
             match_date = driver.find_element(By.CLASS_NAME, 'duelParticipant__startTime')
