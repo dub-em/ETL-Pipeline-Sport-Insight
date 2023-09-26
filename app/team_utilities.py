@@ -8,6 +8,7 @@ from fake_useragent import UserAgent
 from itertools import chain
 import time, os, psycopg2, json, re
 import pandas as pd
+from sqlalchemy import create_engine
 from var import exe_path
 from config import settings
 
@@ -329,11 +330,6 @@ def matches_details(team, url):
 
 def data_loader(dataset):
     '''Extracting the data from the dataframe to load into the database multiple rows at a time'''
-    lim = dataset.shape[0]
-
-    match_data = []
-    for i in range(lim):
-        match_data.append(dataset.iloc[i,:])
 
     #PostgreSQL database connection parameters
     connection_params = {
@@ -364,10 +360,12 @@ def data_loader(dataset):
         away_team_matchespattern JSONB
     );'''
     cursor.execute(create_query)
+    connection.commit()
 
-    #Insert all the data into the table multiple rows at a time
-    insert_query = "INSERT INTO historic_match (date, hometeam, awayteam, match_urls, home_urls, away_urls, league, home_team_matches, away_team_matches, head2head_matches, home_team_matchespattern, away_team_matchespattern) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-    cursor.executemany(insert_query, match_data)
+    # Create a SQLAlchemy engine
+    engine = create_engine(f'postgresql+psycopg2://{settings.database_user}:{settings.database_password}@{settings.database_hostname}/{settings.database_name}')
+
+    dataset.to_sql('historic_match', engine, if_exists='append', index=False)
 
     #Commit and close connection
     connection.commit()
@@ -429,19 +427,19 @@ def match_extraction(leagues_list, today, tomorrow):
             overall_urls = [f"{base_url}{string.replace('g_1_', '')}/#/h2h/overall" for string in id_match]
             home_urls = [f"{base_url}{string.replace('g_1_', '')}/#/h2h/home" for string in id_match]
             away_urls = [f"{base_url}{string.replace('g_1_', '')}/#/h2h/away" for string in id_match]
-            df = pd.DataFrame(clean, columns=['Date/Time', 'HomeTeam', 'AwayTeam'])
+            df = pd.DataFrame(clean, columns=['date', 'hometeam', 'awayteam'])
             df['match_urls'] = overall_urls
             df['home_urls'] = home_urls
             df['away_urls'] = away_urls
             
             #Converting the date columns to datetime
-            df['Date/Time'] = pd.to_datetime(df['Date/Time'] + '.2023', format='%d.%m. %H:%M.%Y')
+            df['date'] = pd.to_datetime(df['date'] + '.2023', format='%d.%m. %H:%M.%Y')
 
             #filters the dataframe prepared using the current date
-            today_df = df[(df['Date/Time'].dt.date == today) | (df['Date/Time'].dt.date == tomorrow)]
+            today_df = df[(df['date'].dt.date == today) | (df['date'].dt.date == tomorrow)]
             today_df = today_df.copy(deep=True)
             curr_league = [key for i in range(len(today_df['match_urls']))]
-            today_df['League'] = curr_league
+            today_df['league'] = curr_league
 
             hometeam_form = []
             awayteam_form = []
@@ -453,7 +451,7 @@ def match_extraction(leagues_list, today, tomorrow):
             for i in range(len(list(today_df['match_urls']))):
                 match_url = list(today_df['match_urls'])[i]
                 print(match_url)
-                setup_1 = f"{list(today_df['HomeTeam'])[i]}:{list(today_df['AwayTeam'])[i]} (Historic Score)"
+                setup_1 = f"{list(today_df['hometeam'])[i]}:{list(today_df['awayteam'])[i]} (Historic Score)"
                 try:
                     home_team_matches, away_team_matches, head2head_matches = matches_scores(match_url)
                     hometeam_form.append(home_team_matches)
@@ -473,8 +471,8 @@ def match_extraction(leagues_list, today, tomorrow):
             for i in range(len(list(today_df['home_urls']))):
                 home_url = list(today_df['home_urls'])[i]
                 print(home_url)
-                home_team = list(today_df['HomeTeam'])[i]
-                setup = f"{list(today_df['HomeTeam'])[i]}:{list(today_df['AwayTeam'])[i]} (Home Inner-Det)"
+                home_team = list(today_df['hometeam'])[i]
+                setup = f"{list(today_df['hometeam'])[i]}:{list(today_df['awayteam'])[i]} (Home Inner-Det)"
                 try:
                     home_team_dets = matches_details(home_team, home_url)
                     home_details.append(home_team_dets)
@@ -490,8 +488,8 @@ def match_extraction(leagues_list, today, tomorrow):
             for i in range(len(list(today_df['away_urls']))):
                 away_url = list(today_df['away_urls'])[i]
                 print(away_url)
-                away_team = list(today_df['AwayTeam'])[i]
-                setup = f"{list(today_df['HomeTeam'])[i]}:{list(today_df['AwayTeam'])[i]} (Away Inner-Det)"
+                away_team = list(today_df['awayteam'])[i]
+                setup = f"{list(today_df['hometeam'])[i]}:{list(today_df['awayteam'])[i]} (Away Inner-Det)"
                 try:
                     away_team_dets = matches_details(away_team, away_url)
                     away_detials.append(away_team_dets)

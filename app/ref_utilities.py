@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import time, os, psycopg2, json, requests
+from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
 from config import settings
@@ -7,12 +8,7 @@ from config import settings
 refexcept_messgs = {}
 
 def refdata_loader(dataset):
-    #Extracting the data from the dataframe to load into the database multiple rows at a time
-    lim = dataset.shape[0]
-
-    ref_data = []
-    for i in range(lim):
-        ref_data.append(dataset.iloc[i,:])
+    '''Extracting the data from the dataframe to load into the database multiple rows at a time'''
 
     #PostgreSQL database connection parameters
     connection_params = {
@@ -40,10 +36,12 @@ def refdata_loader(dataset):
         referee_matchhistdetails JSONB
     );'''
     cursor.execute(create_query)
+    connection.commit()
 
-    #Insert all the data into the table multiple rows at a time
-    insert_query = "INSERT INTO ref_historic_match (date, time, hometeam, awayteam, result, matchlink, league, refereelink, referee_matchistlink, referee_matchhistdetails) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-    cursor.executemany(insert_query, ref_data)
+    # Create a SQLAlchemy engine
+    engine = create_engine(f'postgresql+psycopg2://{settings.database_user}:{settings.database_password}@{settings.database_hostname}/{settings.database_name}')
+
+    dataset.to_sql('ref_historic_match', engine, if_exists='append', index=False)
 
     #Commit and close connection
     connection.commit()
@@ -94,22 +92,22 @@ def refreehist_extraction(leagues_list, today, tomorrow):
                 zipped_lists = [pair for pair in zipped_lists if len(pair[0]) > 0]
                 data, match_links = zip(*zipped_lists)
 
-                columns = ['Date', 'Time', 'Home Team', 'Score', 'Away Team', 'Result', 'Links']
+                columns = ['date', 'time', 'hometeam', 'score', 'awayteam', 'result', 'matchlink']
                 df = pd.DataFrame(data, columns=columns)
-                df.Links = match_links
+                df.matchlink = match_links
 
-                df = df[df['Links'] != ''] #Drops columns with empty url
+                df = df[df['matchlink'] != ''] #Drops columns with empty url
 
                 #Add the prefix to the column
-                df['Links'] = 'https://www.worldfootball.net' + df['Links']
-                df['Date'] = df['Date'].replace('', np.nan).ffill()
-                df['Date'] = pd.to_datetime(df['Date'],  format='%d/%m/%Y')
+                df['matchlink'] = 'https://www.worldfootball.net' + df['matchlink']
+                df['date'] = df['date'].replace('', np.nan).ffill()
+                df['date'] = pd.to_datetime(df['date'],  format='%d/%m/%Y')
 
                 #Filter rows with today's date
-                today_df = df[(df['Date'].dt.date == today) | (df['Date'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
+                today_df = df[(df['date'].dt.date == today) | (df['date'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
                 today_df = today_df.copy(deep=True)
                 curr_league = [key for i in range(len(today_df['Links']))]
-                today_df['League'] = curr_league
+                today_df['league'] = curr_league
 
                 #Extracts the link to the profile of the officiating referee from the match page using match url
                 referee_urls = []
@@ -130,11 +128,11 @@ def refreehist_extraction(leagues_list, today, tomorrow):
                         referee_urls.append('')
 
                 #Add the url of the profile of the officiating referee of each match to dataframe containing daily matches
-                today_df['Referee_Links'] = referee_urls
+                today_df['refereelink'] = referee_urls
 
                 #Extracts the url of the most recent matches officiated by the officiating referee
                 ref_matchhist_url = []
-                for ref_url in today_df.Referee_Links:
+                for ref_url in today_df.refereelink:
                     if ref_url != '':
                         ref_matchhist = []
 
@@ -165,11 +163,11 @@ def refreehist_extraction(leagues_list, today, tomorrow):
                         ref_matchhist_url.append(json.dumps({'1':[]}))
 
                 #Add the urls of the most recent matches officiated by the referee to the dataframe of daily matches
-                today_df['Referee_MatchHist_Links'] = ref_matchhist_url
+                today_df['referee_matchistlink'] = ref_matchhist_url
 
                 #Extracts the details from each match and stores in a dictionary
                 ref_matchhist_detail = []
-                for row in today_df.Referee_MatchHist_Links:
+                for row in today_df.referee_matchistlink:
                     transf_row = json.loads(row)
                     if transf_row['1'] != []:
                         data_dict = {'Date':[], 'Home Team':[], 'Away Team':[], 'Score':[], 'Yellow Cards':[], 'Unkown Card':[], 'Red Cards':[]}
@@ -201,8 +199,8 @@ def refreehist_extraction(leagues_list, today, tomorrow):
                         ref_matchhist_detail.append(json.dumps({}))
 
                 #Extracted match details are added to the dataframe of daily matches
-                today_df['Referee_MatchHist_Details'] = ref_matchhist_detail
-                today_df.drop('Score', axis=1, inplace=True)
+                today_df['referee_matchhistdetails'] = ref_matchhist_detail
+                today_df.drop('score', axis=1, inplace=True)
                 
                 #Loads the extracted league to the database
                 for i in range(2): #Tries twice to load data in case of any unforeseen connection issue

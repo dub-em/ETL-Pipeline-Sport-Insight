@@ -15,7 +15,7 @@ def main():
     today = date.today()
     tomorrow = date.today() + timedelta(days=1)
     print(today, tomorrow)
-    if (today.day % 2) == 1:
+    if (today.day % 2) == 0:
         match_extraction(testleagues_list, today, tomorrow)
         refreehist_extraction(testleagues_list, today, tomorrow)
 
