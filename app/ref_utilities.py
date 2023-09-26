@@ -106,12 +106,12 @@ def refreehist_extraction(leagues_list, today, tomorrow):
                 #Filter rows with today's date
                 today_df = df[(df['date'].dt.date == today) | (df['date'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
                 today_df = today_df.copy(deep=True)
-                curr_league = [key for i in range(len(today_df['Links']))]
+                curr_league = [key for i in range(len(today_df['matchlink']))]
                 today_df['league'] = curr_league
 
                 #Extracts the link to the profile of the officiating referee from the match page using match url
                 referee_urls = []
-                for match_url in today_df.Links:
+                for match_url in today_df.matchlink:
                     response = requests.get(match_url)
                     html_content = response.content
                     soup = BeautifulSoup(html_content, "html.parser")
