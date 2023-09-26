@@ -215,15 +215,16 @@ def matches_details(team, url):
             #Loads up the url using the chromedriver and clicks the cookie prompt
             driver.get(url)
             WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="onetrust-accept-btn-handler"]'))).click()
+            time.sleep(2)
 
             #Extracts the data in the table rows (containing links to previous match)
             element = driver.find_elements(By.CLASS_NAME, "h2h__row")
             elem = element[count]
             elem.click()
             driver.switch_to.window(driver.window_handles[-1]) #Switches the driver to the new opened page
-            current_url = driver.current_url
+            #current_url = driver.current_url
             #print(current_url)
-            elem_links.append(current_url)
+            #elem_links.append(current_url)
             
             #checks which role the team under consideration played as (home or away) in the match being checked
             match_date = driver.find_element(By.CLASS_NAME, 'duelParticipant__startTime')
@@ -315,7 +316,7 @@ def matches_details(team, url):
             driver.close()
         except Exception as e:
             setup = f"{team}:{url} ({count}) (Inner-Match-Det)"
-            except_messgs[f"({setup})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
+            except_messgs[f"({setup})"] = f"{type(e).__name__}: {e.split('Stacktrace:')[0]}" #Catches and Records Error
             try:
                 driver.close()
                 list_of_details[str(count)] = {}
@@ -459,7 +460,7 @@ def match_extraction(leagues_list, today, tomorrow):
                     head2head.append(head2head_matches)
                     print('done!')
                 except Exception as e:
-                    except_messgs[str(key)+f": {league_counter} ({setup_1})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
+                    except_messgs[str(key)+f": {league_counter} ({setup_1})"] = f"{type(e).__name__}: {e.split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
                     hometeam_form.append(empty_json)
@@ -478,7 +479,7 @@ def match_extraction(leagues_list, today, tomorrow):
                     home_details.append(home_team_dets)
                     print('done!')
                 except Exception as e:
-                    except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
+                    except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {e.split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
                     home_details.append(empty_json)
@@ -495,7 +496,7 @@ def match_extraction(leagues_list, today, tomorrow):
                     away_detials.append(away_team_dets)
                     print('done!')
                 except Exception as e:
-                    except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {e}" #Catches and Records Error
+                    except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {e.split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
                     away_detials.append(empty_json)
@@ -516,7 +517,7 @@ def match_extraction(leagues_list, today, tomorrow):
                     print("All daily matches of {} have been loaded!".format(key))
                     break
                 except Exception as e:
-                    except_messgs[str(key)+f": {league_counter} (Database Loading)"] = f"{type(e).__name__}: {e}" #Catches and Records Error
+                    except_messgs[str(key)+f": {league_counter} (Database Loading)"] = f"{type(e).__name__}: {e.split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
                     print("All daily matches of {} couldn't be loaded!".format(key))
                     if i < 1: #If try isn't successful but it's the first time, then it tries again
@@ -552,7 +553,7 @@ def match_extraction(leagues_list, today, tomorrow):
                 data_loader(final_dataset) #If try is successful, breaks the loop
                 break
             except Exception as e:
-                except_messgs[f"(Final Database Loading): {i}"] = f"{type(e).__name__}: {e}" #Catches and Records Error
+                except_messgs[f"(Final Database Loading): {i}"] = f"{type(e).__name__}: {e.split('Stacktrace:')[0]}" #Catches and Records Error
                 league_counter += 1
                 continue #If try isn't successful but it's the first time, then it tries again
         
