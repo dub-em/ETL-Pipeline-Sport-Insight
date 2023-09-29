@@ -13,10 +13,10 @@ def main():
     
     It also records the error log and sends it to the dev's/client's email'''
     today = date.today()
-    #tomorrow = date.today() + timedelta(days=1)
-    print(today)
-    match_extraction(leagues_list, today)#, tomorrow)
-    refreehist_extraction(leagues_list, today)#, tomorrow)
+    tomorrow = date.today() + timedelta(days=1)
+    print(today, tomorrow)
+    match_extraction(leagues_list, tomorrow)
+    refreehist_extraction(leagues_list, tomorrow)
 
     #Concatenating error logs to send to email.
     email = f"Error Logs for {today} Extraction.\n\n"
