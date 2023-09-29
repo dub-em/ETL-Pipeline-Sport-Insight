@@ -382,7 +382,7 @@ def match_extraction(leagues_list, today):#, tomorrow):
             keep variable the same to maintain the while loop until data is gotten'''
             
             league_url = leagues_list[key][0]
-            #print(league_url)
+            print(league_url)
 
             #Sets up a fake browser
             #services = Service(executable_path=exe_path)
@@ -447,14 +447,14 @@ def match_extraction(leagues_list, today):#, tomorrow):
             #for each match url extract the head2head, home team and away team games score for the last 10 recent games
             for i in range(len(list(today_df['match_urls']))):
                 match_url = list(today_df['match_urls'])[i]
-                #print(match_url)
+                print(match_url)
                 setup_1 = f"{list(today_df['hometeam'])[i]}:{list(today_df['awayteam'])[i]} (Historic Score)"
                 try:
                     home_team_matches, away_team_matches, head2head_matches = matches_scores(match_url)
                     hometeam_form.append(home_team_matches)
                     awayteam_form.append(away_team_matches)
                     head2head.append(head2head_matches)
-                    #print('done!')
+                    print('done!')
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} ({setup_1})"] = f"{type(e).__name__}: {str(e).split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
@@ -462,41 +462,41 @@ def match_extraction(leagues_list, today):#, tomorrow):
                     hometeam_form.append(empty_json)
                     awayteam_form.append(empty_json)
                     head2head.append(empty_json)
-                    #print('except!')
+                    print('except!')
             
             #extract the match detail (yellow cars, goals, penalties and times etc) for last 10 games by home team
             for i in range(len(list(today_df['home_urls']))):
                 home_url = list(today_df['home_urls'])[i]
-                #print(home_url)
+                print(home_url)
                 home_team = list(today_df['hometeam'])[i]
                 setup = f"{list(today_df['hometeam'])[i]}:{list(today_df['awayteam'])[i]} (Home Inner-Det)"
                 try:
                     home_team_dets = matches_details(home_team, home_url)
                     home_details.append(home_team_dets)
-                    #print('done!')
+                    print('done!')
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {str(e).split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
                     home_details.append(empty_json)
-                    #print('except!')
+                    print('except!')
             
             #extract the match detail (yellow cars, goals, penalties and times etc) for last 10 games by away team
             for i in range(len(list(today_df['away_urls']))):
                 away_url = list(today_df['away_urls'])[i]
-                #print(away_url)
+                print(away_url)
                 away_team = list(today_df['awayteam'])[i]
                 setup = f"{list(today_df['hometeam'])[i]}:{list(today_df['awayteam'])[i]} (Away Inner-Det)"
                 try:
                     away_team_dets = matches_details(away_team, away_url)
                     away_detials.append(away_team_dets)
-                    #print('done!')
+                    print('done!')
                 except Exception as e:
                     except_messgs[str(key)+f": {league_counter} ({setup})"] = f"{type(e).__name__}: {str(e).split('Stacktrace:')[0]}" #Catches and Records Error
                     league_counter += 1
                     empty_json = json.dumps({})
                     away_detials.append(empty_json)
-                    #print('except!')   
+                    print('except!')   
 
             #Add all these extracted data to the dataframe of daily match of the current league being extracted
             today_df['home_team_matches'] = hometeam_form
