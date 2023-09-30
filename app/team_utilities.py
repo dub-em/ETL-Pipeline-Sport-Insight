@@ -370,7 +370,7 @@ def data_loader(dataset):
     connection.close()
 
 
-def match_extraction(leagues_list, today):#, tomorrow):
+def match_extraction(leagues_list, today, tomorrow):
     leagues_dataset = {} #Created the empyt dictionary that will be used to concatenate all table from all leagues
     
     for key in list(leagues_list.keys()):
@@ -433,7 +433,7 @@ def match_extraction(leagues_list, today):#, tomorrow):
             df['date'] = pd.to_datetime(df['date'] + '.2023', format='%d.%m. %H:%M.%Y')
 
             #filters the dataframe prepared using the current date
-            today_df = df[(df['date'].dt.date == today)]# | (df['date'].dt.date == tomorrow)]
+            today_df = df[(df['date'].dt.date == today) | (df['date'].dt.date == tomorrow)]
             today_df = today_df.copy(deep=True)
             curr_league = [key for i in range(len(today_df['match_urls']))]
             today_df['league'] = curr_league
