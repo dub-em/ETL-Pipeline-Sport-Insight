@@ -49,7 +49,7 @@ def refdata_loader(dataset):
     connection.close()
 
 
-def refreehist_extraction(leagues_list, today):#, tomorrow):
+def refreehist_extraction(leagues_list, today, tomorrow):
     leagues_dataset = {} #Created the empyt dictionary that will be used to concatenate all table from all leagues
 
     for key in list(leagues_list.keys()): #Loops through all the leagues in our list of league url
@@ -104,7 +104,7 @@ def refreehist_extraction(leagues_list, today):#, tomorrow):
                 df['date'] = pd.to_datetime(df['date'],  format='%d/%m/%Y')
 
                 #Filter rows with today's date
-                today_df = df[(df['date'].dt.date == today)]# | (df['date'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
+                today_df = df[(df['date'].dt.date == today) | (df['date'].dt.date == tomorrow)] #Account for when the dataset filter everything due to no matching date
                 today_df = today_df.copy(deep=True)
                 curr_league = [key for i in range(len(today_df['matchlink']))]
                 today_df['league'] = curr_league
